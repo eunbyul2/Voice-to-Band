@@ -1,0 +1,40 @@
+# Swarm용, 무중단
+version: "3.8"
+
+services:
+  api:
+    image: ghcr.io/yourid/voice2band-api:${GIT_SHA:-latest}
+    environment:
+      - STATIC_DIR=/data/static
+    volumes:
+      - v2b-data:/data
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: ghcr.io/yourid/voice2band-nginx:${GIT_SHA:-latest}
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  v2b-data:
+    driver: local

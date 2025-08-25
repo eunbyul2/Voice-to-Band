@@ -1,0 +1,72 @@
+name: ci-cd
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_API: ghcr.io/${{ github.repository_owner }}/voice2band-api
+  IMAGE_WEB: ghcr.io/${{ github.repository_owner }}/voice2band-web
+  IMAGE_NGX: ghcr.io/${{ github.repository_owner }}/voice2band-nginx
+  GIT_SHA: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build&Push API
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.api
+          push: true
+          tags: |
+            ${{ env.IMAGE_API }}:latest
+            ${{ env.IMAGE_API }}:${{ env.GIT_SHA }}
+
+      - name: Build&Push WEB
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.web
+          push: true
+          tags: |
+            ${{ env.IMAGE_WEB }}:latest
+            ${{ env.IMAGE_WEB }}:${{ env.GIT_SHA }}
+
+      - name: Build&Push NGINX
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.nginx
+          push: true
+          tags: |
+            ${{ env.IMAGE_NGX }}:latest
+            ${{ env.IMAGE_NGX }}:${{ env.GIT_SHA }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remote deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            export GIT_SHA=${{ env.GIT_SHA }}
+            docker swarm init || true
+            docker stack deploy -c /home/${{ secrets.SSH_USER }}/docker-compose.prod.yml voice2band

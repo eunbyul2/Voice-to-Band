@@ -1,0 +1,6 @@
+name: voice
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+prefix: C:\Users\01028\anaconda3\envs\voice

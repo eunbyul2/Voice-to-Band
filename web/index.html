@@ -1,0 +1,20 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Voice2Band MVP</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <h1>Voice2Band (Pitch/Tempo)</h1>
+  <button id="rec">● 녹음</button>
+  <button id="stop" disabled>■ 정지</button>
+  <div>
+    <label>Pitch(semitones): <input id="pitch" type="number" value="5" step="1"></label>
+    <label>TimeStretch: <input id="stretch" type="number" value="1.0" step="0.05"></label>
+  </div>
+  <audio id="player" controls></audio>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

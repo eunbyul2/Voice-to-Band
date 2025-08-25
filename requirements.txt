@@ -1,0 +1,14 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.4
+pydantic-settings==2.2.1
+numpy==1.26.4
+faster-whisper==1.0.2
+soundfile==0.12.1
+resampy==0.4.3
+onnxruntime==1.17.3            # GPU면 onnxruntime-gpu로 교체
+python-multipart==0.0.9
+websockets==12.0
+librosa==0.10.2.post1
+prometheus-client==0.20.0
+loguru==0.7.2

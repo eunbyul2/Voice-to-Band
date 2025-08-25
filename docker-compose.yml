@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/yourid/voice2band-api:dev
+    ports:
+      - "8000:8000"
+    environment:
+      - STATIC_DIR=/data/static
+    volumes:
+      - ./runtime_data:/data
+      - ./models/piper:/opt/piper:ro
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    image: ghcr.io/yourid/voice2band-nginx:dev
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./web:/usr/share/nginx/html:ro
+
+volumes: {}
