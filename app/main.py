@@ -8,7 +8,7 @@ from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 from loguru import logger
 
 from .config import settings
-from .routers import stt_ws, tts, presets, metrics, pitch
+from .routers import stt_ws, tts, presets, metrics, pitch, video, public
 from .utils.schemas import ProcessParams
 from .processing import process_file, STATIC_DIR
 
@@ -30,6 +30,8 @@ app.include_router(tts.router,     prefix=settings.API_PREFIX)
 app.include_router(presets.router, prefix=settings.API_PREFIX)
 app.include_router(metrics.router, prefix=settings.API_PREFIX)   # POST /api/metrics/push
 app.include_router(pitch.router,   prefix=settings.API_PREFIX)
+app.include_router(video.router, prefix=settings.API_PREFIX)
+app.include_router(public.router, prefix=settings.API_PREFIX)
 
 @app.get("/health")
 def health():

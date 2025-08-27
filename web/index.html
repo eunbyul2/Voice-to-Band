@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="ko">
 <head>
@@ -15,6 +14,27 @@
     <label>TimeStretch: <input id="stretch" type="number" value="1.0" step="0.05"></label>
   </div>
   <audio id="player" controls></audio>
+
+  <!-- 공유 버튼들: 처리 성공 후에만 활성화 -->
+  <div id="share" style="margin-top:12px">
+    <button id="shareBandBtn" disabled>BAND로 공유</button>
+    <button id="shareKakaoBtn" disabled>카카오톡 공유</button>
+    <button id="shareNativeBtn" disabled>기기 공유</button>
+    <button id="copyLinkBtn" disabled>링크 복사</button>
+
+    <!-- 유튜브 관련(선택) -->
+    <button id="makeYoutubeBtn" disabled>YouTube용 MP4 만들기</button>
+    <a id="openStudio" href="https://studio.youtube.com" target="_blank" rel="noopener" style="display:none">YouTube Studio 열기</a>
+  </div>
+
+  <!-- Kakao JS SDK (먼저 로드) -->
+  <script src="/api/public/kakao-config.js"></script>
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" crossorigin="anonymous"></script>
+  <script>
+    if (window.KAKAO_JS_KEY) { Kakao.init(window.KAKAO_JS_KEY); }
+  </script>
+
+  <!-- 우리 앱 스크립트: 맨 마지막에 1회만, 모듈/일반 중 택1 -->
   <script type="module" src="./app.js"></script>
 </body>
 </html>
